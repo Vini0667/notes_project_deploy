@@ -1,0 +1,95 @@
+# Compose file to up development environment
+
+services:
+    #------------------------- Back end configuration -------------------------#
+    notes_mongo:
+        image: mongo
+        ports:
+            - "27017:27017"
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=root
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+                max_attempts: 3
+                delay: 10s
+        tty: true
+        stdin_open: true
+
+    notes_backend:
+        build:
+            context: ../notes_project_backend
+            dockerfile: Dockerfile-dev
+        volumes:
+            - ../notes_project_backend/:/app
+            - /app/node_modules
+        ports:
+            - "9000:9000"
+        environment:
+            MONGO_URI: mongodb://mongo:27017/my_database
+            NODE_ENV: development
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+                max_attempts: 3
+                delay: 10s
+            resources:
+                limits:
+                    memory: 512m
+                    cpus: "0.5"
+        depends_on:
+            - notes_mongo
+        tty: true
+        stdin_open: true
+        command: ["yarn", "run", "dev"]
+
+    #------------------------- Front end configuration -------------------------#
+    notes_frontend:
+        build:
+            context: ../notes_project_frontend
+            dockerfile: Dockerfile-dev
+        ports:
+            - "3000:3000"
+        volumes:
+            - ../notes_project_frontend/:/app
+            - /app/node_modules
+        deploy:
+            resources:
+                replicas: 1
+                restart_policy:
+                    condition: on-failure
+                    max_attempts: 3
+                    delay: 10s
+                limits:
+                    memory: 512m
+                    cpus: "0.5"
+        depends_on:
+            - notes_backend
+        tty: true
+        stdin_open: true
+        command: ["npm", "start"]
+
+    notes_nginx:
+        image: nginx
+        ports:
+            - "5000:80"
+        volumes:
+            - ./nginx-dev/default.conf:/etc/nginx/conf.d/default.conf
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+                max_attempts: 3
+                delay: 10s
+            resources:
+                limits:
+                    memory: 256m
+                    cpus: "0.25"
+        depends_on:
+            - notes_frontend
+            - notes_backend
+        tty: true
+        stdin_open: true
