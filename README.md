@@ -13,10 +13,16 @@ O script __commands.rb__ é responsável pela instalação e por subir o projeto
 Para usar o script, execute o comando abaixo:
 
 ### Requerimentos
-- Ruby 2.7 ou superior
+- Ruby
 - Docker ou Podman&Podman-Compose
 
+### Como usar
+
+Subir aplicação
 ```
 ruby commands.rb up
+```
+Parar aplicação
+```
 ruby commands.rb down
 ```
