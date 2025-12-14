@@ -70,7 +70,6 @@ services:
             - notes_backend
         tty: true
         stdin_open: true
-        command: ["npm", "start"]
 
     notes_nginx:
         image: nginx
