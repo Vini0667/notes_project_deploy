@@ -19,16 +19,13 @@ Table users_roles {
   access_date datetime [not null]
 }
 
-Table permissions {
+Table plans {
   id number [primary key]
-  description varchar [unique, not null]
-  slug varchar [unique, not null]
-}
-
-Table access_text {
-  user_uuid uuid [not null, ref: > users.uuid, primary key]
-  text_id number [not null, ref: > texts.id, primary key]
-  permissions_id number [not null, ref: > permissions.id] 
+  name varchar [not null]
+  description varchar [not null]
+  slug varchar [not null, unique]
+  price decimal(10, 3)
+  max_storage_mb number
 }
 
 Table users {
@@ -41,6 +38,18 @@ Table users {
   situation_id number [not null, ref: > situations.id]
 }
 
+Table user_subscriptions {
+  id number [primary key]
+  user_uuid uuid [ref: > users.uuid, not null, unique]
+  plan_id number [ref: > plans.id, not null]
+  start_date timestamp [not null]
+  end_date timestamp
+  subscription_token varchar [unique, not null]
+  payment_status varchar [not null]
+  card_last4 varchar
+  card_brand varchar
+}
+
 Table texts_situations {
   id number [primary key]
   description varchar [unique, not null]
@@ -51,6 +60,6 @@ Table texts {
   id number [primary key]
   title varchar [not null]
   description text [not null]
-  text_own_uuid hash [ref: - users.uuid, not null]
+  text_own_uuid uuid [ref: > users.uuid, not null]
   situation_text_id number [ref: > texts_situations.id, not null]
 }
