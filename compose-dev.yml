@@ -9,9 +9,9 @@ services:
         volumes:
             - ~/.projects-databases/notes_mongo:/data/db
         environment:
-            - MONGO_INITDB_DATABASE=notes_test
-            - MONGO_INITDB_ROOT_USERNAME=root
-            - MONGO_INITDB_ROOT_PASSWORD=root
+            MONGO_INITDB_DATABASE: notes_test
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
         deploy:
             replicas: 1
             restart_policy:
