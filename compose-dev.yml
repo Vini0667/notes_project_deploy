@@ -24,7 +24,6 @@ services:
             dockerfile: Dockerfile-dev
         volumes:
             - ../notes_project_backend/:/app
-            - /app/node_modules
         ports:
             - "9000:9000"
         environment:
@@ -55,7 +54,6 @@ services:
             - "3000:3000"
         volumes:
             - ../notes_project_frontend/:/app
-            - /app/node_modules
         deploy:
             resources:
                 replicas: 1
